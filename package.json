@@ -1,0 +1,24 @@
+{
+  "name": "bprivate-profile-pic",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/jeojoe/bprivate-profile-pic.git",
+  "author": "jeojoe <jirat.onaree@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "start-micro": "micro",
+    "dev-micro": "micro-dev",
+    "dev-next": "next",
+    "build-next": "next build",
+    "start-next": "next start"
+  },
+  "dependencies": {
+    "micro": "^9.1.4",
+    "next": "^5.0.1-canary.16",
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "micro-dev": "^2.2.2"
+  }
+}
