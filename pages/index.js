@@ -8,6 +8,7 @@ export default class Home extends Component {
   }
 
   _uploadFile = (file) => {
+    console.log(file);
     request
       .post(config.SERVER_URL)
       .send(file)
