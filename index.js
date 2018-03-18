@@ -2,28 +2,17 @@ const { buffer } = require('micro');
 const cors = require('micro-cors')();
 const sharp = require('sharp');
 const gm = require('gm');
+const gmImage = require('gm').subClass({ imageMagick: true });
 
 const config = require('./config');
 
 const handler = async (req) => {
   const picBuffer = await buffer(req);
 
-  // sharp(picBuffer)
-  //   .resize(1000, 1000)
-  //   .background({
-  //     r: 19, g: 36, b: 114, alpha: 1,
-  //   })
-  //   .negate()
-  //   .normalize()
-  //   .flatten()
-  //   .toFile('bprivate.png', (err, info) => {
-  //     console.log(err, info);
-  //   });
-  // mask('bprivate.png', 'btcp-logo.png');
   const [grayBuffer, blueBuffer] = await mask(picBuffer);
 
-  await sharp(grayBuffer).toFile('gray.png');
-  await sharp(blueBuffer).toFile('blue.png');
+  // await sharp(grayBuffer).toFile('gray.png');
+  // await sharp(blueBuffer).toFile('blue.png');
 
   sharp(grayBuffer)
     .overlayWith(blueBuffer)
@@ -54,15 +43,24 @@ function mask(picBuffer) {
   });
 
   const bluePm = new Promise((resolve, reject) => {
-    gm(picBuffer)
+    gmImage(picBuffer)
       .resize(config.PIC_SIZE, config.PIC_SIZE)
-      .colorize(19, 36, 144)
-      .operator('Opacity', 'Negate', 0)
-      .operator('Opacity', 'Multiply', 0.5)
-      .operator('Opacity', 'Negate', 0)
-      .toBuffer('PNG', (err, blueBuffer) => {
+      .colorspace('GRAY')
+      .colorize(19, 36, 114)
+      .toBuffer('PNG', (err, onlyBlueBuffer) => {
         if (!err) {
-          resolve(blueBuffer);
+          gm(onlyBlueBuffer)
+            .matte()
+            .operator('Opacity', 'Negate', 0)
+            .operator('Opacity', 'Multiply', 0.5)
+            .operator('Opacity', 'Negate', 0)
+            .toBuffer('PNG', (err2, blueAndTransBuffer) => {
+              if (!err2) {
+                resolve(blueAndTransBuffer);
+                return;
+              }
+              reject(err2);
+            });
           return;
         }
         reject(err);
@@ -70,27 +68,6 @@ function mask(picBuffer) {
   });
 
   return Promise.all([grayPm, bluePm]);
-  // return new Promise((resolve, reject) => {
-  //   gm(img)
-  //     .colorspace('GRAY')
-  //     .contrast('+')
-  //     .write('bprivate-grey.png', (err) => {
-  //       if (!err) {
-  //         gm('bprivate.png')
-  //           .write('bprivate-color.png', (err2) => {
-  //             if (!err2) {
-  //               gm()
-  //                 .command('composite')
-  //                 .compose('CopyBlack')
-  //                 .in('bprivate.png', 'bprivate-color.png')
-  //                 .write('lol.png', (err) => {
-  //                   console.log(err);
-  //                 });
-  //             }
-  //           })
-  //       }
-  //     });
-  // })
   // gm()
   //   .command('composite')
   //   .compose('Minus')
