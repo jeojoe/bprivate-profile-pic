@@ -3,7 +3,7 @@ import { Head } from 'next/head';
 import request from 'superagent';
 
 import config from '../config';
-import { Layout } from '../components';
+import { Layout, Header, Showcase } from '../components';
 
 export default class Home extends Component {
   state = {
@@ -12,39 +12,38 @@ export default class Home extends Component {
   }
 
   _uploadFile = (file) => {
-    console.log(file);
     request
       .post(config.SERVER_URL)
       .send(file)
       .buffer(true)
-      .then((err, res) => console.log(res, err));
+      .then((err, res) => {
+        if (err) {
+          console.log(err);
+          console.log(res);
+          this.setState({ resultUrl: null });
+          return;
+        }
+        // Success
+        console.log(res.body);
+        this.setState({ resultUrl: res.body });
+      });
   }
 
   _formSubmit = (e) => {
     e.preventDefault();
     this._uploadFile(this.state.file);
+    this.setState({ file: null });
   }
 
   render() {
     return (
       <Layout>
         <div className="container">
-          <h1 className="header">Bitcoin Private Profile Pic Generator (Beta!)</h1>
-          <p>Always be private.</p>
+          <Header />
           <div className="row">
+            <div className="col-12 col-md-6"> <Showcase /> </div>
             <div className="col-12 col-md-6">
-              <figure className="figure">
-                <img
-                  src="https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjewhw2f100002ipz3w1kc83a"
-                  className="figure-img img-fluid rounded"
-                  alt="It's Elon Musk!"
-                />
-                <figcaption className="figure-caption text-right">
-                  Guess who is in above image.
-                </figcaption>
-              </figure>
-            </div>
-            <div className="col-12 col-md-6">
+              {/* Form */}
               <form onSubmit={this._formSubmit}>
                 <div className="form-group">
                   <label htmlFor="uploadFile">
@@ -65,7 +64,6 @@ export default class Home extends Component {
                     </label>
                   </div>
                 </div>
-
                 <div className="form-group">
                   <button
                     type="submit"
@@ -75,17 +73,21 @@ export default class Home extends Component {
                   </button>
                 </div>
               </form>
+
+              {/* Result Image */}
+              {this.state.resultUrl &&
+                <img
+                  src={this.state.resultUrl}
+                  alt="Your private profile pic."
+                />
+              }
+
             </div>
           </div>
         </div>
         <style jsx>{`
           .container {
             padding-top: 30px;
-          }
-          .header {
-            font-family: 'Ubuntu', sans-serif;
-            font-weight: bold;
-            color: #272D63;
           }
         `}
         </style>
