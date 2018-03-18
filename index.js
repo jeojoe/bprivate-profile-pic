@@ -3,6 +3,7 @@ const cors = require('micro-cors')();
 const sharp = require('sharp');
 const gm = require('gm');
 const gmImage = require('gm').subClass({ imageMagick: true });
+const aws = require('aws-sdk');
 
 const config = require('./config');
 
@@ -96,6 +97,11 @@ function mask(picBuffer) {
   ]);
 }
 
+const spaceEndPoint = new aws.Endpoint('sgp1.digitaloceanspaces.com');
+const s3 = new aws.S3({
+  endpoint: spaceEndPoint,
+});
+
 // Http handler
 const handler = async (req) => {
   const picBuffer = await buffer(req);
@@ -131,7 +137,18 @@ const handler = async (req) => {
       gm(data)
         .modulate(95, 155)
         .contrast('+')
-        .write('result.png', err2 => console.log(err2));
+        .toBuffer('PNG', (err, resultBuffer) => {
+          s3.upload({
+            ACL: 'public-read',
+            Bucket: 'jeojoe',
+            ContentType: 'image/png',
+            Key: 'lol.png',
+            Body: resultBuffer,
+          }, (params) => {
+            console.log(params);
+            console.log('HAPPy!!');
+          });
+        });
     });
 
   return 'success';

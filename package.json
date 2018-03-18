@@ -13,6 +13,7 @@
     "start-server": "PORT=3001 micro -p 3001"
   },
   "dependencies": {
+    "aws-sdk": "^2.211.0",
     "gm": "^1.23.1",
     "micro": "^9.1.4",
     "micro-cors": "^0.1.0",
