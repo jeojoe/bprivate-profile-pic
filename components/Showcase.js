@@ -1,14 +1,14 @@
 import React from 'react';
 
-export default () => (
+export default ({ loading, resultUrl }) => (
   <figure className="figure">
     <img
-      src="https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/showcase"
+      src={resultUrl || 'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/showcase'}
       className="figure-img img-fluid rounded"
-      alt="It's Elon Musk!"
+      alt={resultUrl ? 'Hmmm...' : 'It\'s Elon Musk!'}
     />
     <figcaption className="figure-caption text-right">
-      Guess who is in above image.
+      {resultUrl ? 'Hmmm 🤔 who\'s in this picture..' : 'Guess who is in above image.'}
     </figcaption>
   </figure>
 );
