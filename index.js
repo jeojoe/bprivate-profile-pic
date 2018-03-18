@@ -125,11 +125,14 @@ const handler = async (req) => {
     })
     .toBuffer();
 
-  await sharp(mergedBlueBuffer)
+  sharp(mergedBlueBuffer)
     .overlayWith(logoCutBuffer)
-    .sharpen()
-    .normalize()
-    .toFile('result.png');
+    .toBuffer((err, data) => {
+      gm(data)
+        .modulate(95, 155)
+        .contrast('+')
+        .write('result.png', err2 => console.log(err2));
+    });
 
   return 'success';
 };
