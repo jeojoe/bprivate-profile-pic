@@ -8,21 +8,36 @@ const config = require('./config');
 
 const handler = async (req) => {
   const picBuffer = await buffer(req);
+  const btcpLogoBuffer = await sharp('btcp-logo.png')
+    .resize(config.PIC_SIZE, config.PIC_SIZE)
+    .toBuffer();
 
-  const [grayBuffer, blueBuffer] = await mask(picBuffer);
+  const [
+    grayBuffer,
+    blueBuffer,
+    grayInvertBuffer,
+    blueInvertBuffer,
+  ] = await mask(picBuffer);
 
   // await sharp(grayBuffer).toFile('gray.png');
   // await sharp(blueBuffer).toFile('blue.png');
-
-  sharp(grayBuffer)
+  const mergedBlueBuffer = await sharp(grayBuffer)
     .overlayWith(blueBuffer)
-    .toFile('bprivate.png', (err, info) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log(info);
-      }
-    });
+    .toBuffer();
+
+  const mergedBlueInvertBuffer = await sharp(grayInvertBuffer)
+    .overlayWith(blueInvertBuffer)
+    .toBuffer();
+
+  const logoCutBuffer = await sharp(mergedBlueInvertBuffer)
+    .overlayWith(btcpLogoBuffer, {
+      cutout: true,
+    })
+    .toBuffer();
+
+  await sharp(mergedBlueBuffer)
+    .overlayWith(logoCutBuffer)
+    .toFile('result.png');
 
   return 'success';
 };
@@ -47,9 +62,9 @@ function mask(picBuffer) {
       .resize(config.PIC_SIZE, config.PIC_SIZE)
       .colorspace('GRAY')
       .colorize(19, 36, 114)
-      .toBuffer('PNG', (err, onlyBlueBuffer) => {
+      .toBuffer('PNG', (err, blueBuffer) => {
         if (!err) {
-          gm(onlyBlueBuffer)
+          gm(blueBuffer)
             .matte()
             .operator('Opacity', 'Negate', 0)
             .operator('Opacity', 'Multiply', 0.5)
@@ -67,18 +82,53 @@ function mask(picBuffer) {
       });
   });
 
-  return Promise.all([grayPm, bluePm]);
-  // gm()
-  //   .command('composite')
-  //   .compose('Minus')
-  //   .in(img, m)
-  //   .write(img, (err) => {
-  //     if (err) {
-  //       console.log(err);
-  //     } else {
-  //       console.log("Success! Image " + img + " was masked with mask " + m);
-  //     }
-  //   });
+  const grayInvertPm = new Promise((resolve, reject) => {
+    gm(picBuffer)
+      .resize(config.PIC_SIZE, config.PIC_SIZE)
+      .colorspace('GRAY')
+      .contrast('+')
+      .negative()
+      .toBuffer('PNG', (err, grayInvertBuffer) => {
+        if (!err) {
+          resolve(grayInvertBuffer);
+          return;
+        }
+        reject(err);
+      });
+  });
+
+  const blueInvertPm = new Promise((resolve, reject) => {
+    gmImage(picBuffer)
+      .resize(config.PIC_SIZE, config.PIC_SIZE)
+      .colorspace('GRAY')
+      .negative()
+      .colorize(19, 36, 114)
+      .toBuffer('PNG', (err, blueInvertBuffer) => {
+        if (!err) {
+          gm(blueInvertBuffer)
+            .matte()
+            .operator('Opacity', 'Negate', 0)
+            .operator('Opacity', 'Multiply', 0.5)
+            .operator('Opacity', 'Negate', 0)
+            .toBuffer('PNG', (err2, blueInvertAndTransBuffer) => {
+              if (!err2) {
+                resolve(blueInvertAndTransBuffer);
+                return;
+              }
+              reject(err2);
+            });
+          return;
+        }
+        reject(err);
+      });
+  });
+
+  return Promise.all([
+    grayPm,
+    bluePm,
+    grayInvertPm,
+    blueInvertPm,
+  ]);
 }
 
 module.exports = cors(handler);
