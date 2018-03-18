@@ -1,9 +1,10 @@
-const { buffer } = require('micro');
+const { buffer, send } = require('micro');
 const cors = require('micro-cors')();
 const sharp = require('sharp');
 const gm = require('gm');
 const gmImage = require('gm').subClass({ imageMagick: true });
 const aws = require('aws-sdk');
+const cuid = require('cuid');
 
 const config = require('./config');
 
@@ -103,7 +104,7 @@ const s3 = new aws.S3({
 });
 
 // Http handler
-const handler = async (req) => {
+const handler = async (req, res) => {
   const picBuffer = await buffer(req);
   const btcpLogoBuffer = await sharp('btcp-logo.png')
     .resize(config.PIC_SIZE, config.PIC_SIZE)
@@ -138,20 +139,26 @@ const handler = async (req) => {
         .modulate(95, 155)
         .contrast('+')
         .toBuffer('PNG', (err, resultBuffer) => {
+          if (err) {
+            send(res, 500, 'Error code 2: Something went wrong!');
+            return;
+          }
           s3.upload({
             ACL: 'public-read',
             Bucket: 'jeojoe',
             ContentType: 'image/png',
-            Key: 'lol.png',
+            Key: `bprivate-profile-pic/${cuid()}.png`,
             Body: resultBuffer,
-          }, (params) => {
-            console.log(params);
-            console.log('HAPPy!!');
+          }, (err2, data) => {
+            if (err2) {
+              send(res, 500, 'Error code 3: Something went wrong!');
+            }
+
+            // Success
+            send(res, 200, data.Location);
           });
         });
     });
-
-  return 'success';
 };
 
 module.exports = cors(handler);
