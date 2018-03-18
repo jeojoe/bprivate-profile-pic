@@ -1,14 +1,43 @@
 import React from 'react';
 
+import config from '../config';
+
 export default () => (
-  <div>
-    <h1 className="header">Bitcoin Private Profile Pic Generator (Beta!)</h1>
-    <p>Always be private.</p>
+  <div className="wrapper">
+    <div className="d-flex">
+      <img
+        src="https://btcprivate.org/images/branding/icon.svg"
+        alt="BTCP - Bitcoin Private Logo"
+        className="logo"
+      />
+      <div>
+        <h1 className="header">
+          Bitcoin <span className="light-blue">Private</span> Profile Picture Generator
+        </h1>
+        <p>Always be private. (Still in beta!)</p>
+      </div>
+    </div>
     <style jsx>{`
+      .wrapper {
+        margin-bottom: 24px;
+      }
+      .logo {
+        height: 100px;
+        margin-right: 15px;
+      }
       .header {
         font-family: 'Ubuntu', sans-serif;
         font-weight: bold;
-        color: #272D63;
+        color: ${config.COLOR_PRIMARY.trim()};
+      }
+      .light-blue {
+        color: ${config.COLOR_SECONDARY.trim()};
+      }
+      @media (max-width: 768px) {
+        .logo {
+          height: 55px;
+          margin-right: 10px;
+        }
       }
     `}
     </style>
