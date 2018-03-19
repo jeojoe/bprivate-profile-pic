@@ -11,4 +11,4 @@
 1. [ ] Google Analytics
 1. [ ] CircleCI
 1. [ ] Testing
-1. [ ] Create counter on whole process time
+1. [x] Create counter on whole process time
