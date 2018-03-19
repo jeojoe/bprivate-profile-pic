@@ -12,7 +12,12 @@ export default class Home extends Component {
     loading: false,
   }
 
+  _setLoadingAndUrl = (loading, resultUrl) => this.setState({ loading, resultUrl })
+
   _onChangeFile = (e) => {
+    // Reset
+    this.setState({ fileUrl: '', file: null });
+
     const file = e.target.files[0];
     if (!file) {
       this.setState({ fileUrl: '', file });
@@ -25,28 +30,6 @@ export default class Home extends Component {
     reader.onloadend = () => {
       this.setState({ fileUrl: reader.result, file });
     };
-  }
-
-  _uploadFile = (file) => {
-    this.setState({ loading: true });
-    request
-      .post(config.SERVER_URL)
-      .send(file)
-      .buffer(true)
-      .then((res) => {
-        this.setState({ loading: false, resultUrl: res.text });
-      })
-      .catch((err) => {
-        this.setState({ loading: false, resultUrl: null });
-        alert('Something went wrong! contact jirat.onaree@gmail.com');
-        console.log(err);
-      });
-  }
-
-  _formSubmit = (e) => {
-    e.preventDefault();
-    this._uploadFile(this.state.file);
-    this.setState({ file: null, fileUrl: '' });
   }
 
   render() {
@@ -71,11 +54,12 @@ export default class Home extends Component {
                     fileUrl={this.state.fileUrl}
                     file={this.state.file}
                     loading={this.state.loading}
+                    _setLoadingAndUrl={this._setLoadingAndUrl}
                   />
                 }
 
                 {/* Form */}
-                <form onSubmit={this._formSubmit}>
+                <form>
                   <div className="form-group">
                     <label htmlFor="uploadFile">
                       {isCropping ?

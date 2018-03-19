@@ -1,9 +1,26 @@
 import React, { Component } from 'react';
 import { Cropper } from 'react-image-cropper';
+import request from 'superagent';
+
+import config from '../config';
 
 class CropperComponent extends Component {
   _upload = () => {
-    console.log(this.cropper.crop());
+    // console.log(this.cropper.values());
+    request
+      .post(config.SERVER_URL)
+      .send({
+        base64: this.cropper.crop(),
+      })
+      .buffer(true)
+      .then((res) => {
+        this.props._setLoadingAndUrl(false, res.text);
+      })
+      .catch((err) => {
+        this.props._setLoadingAndUrl(false, null);
+        alert('Something went wrong! contact jirat.onaree@gmail.com');
+        console.log(err);
+      });
   }
 
   render() {
