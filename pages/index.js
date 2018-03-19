@@ -14,6 +14,8 @@ export default class Home extends Component {
 
   _setLoadingAndUrl = (loading, resultUrl) => this.setState({ loading, resultUrl })
 
+  _resetFile = () => this.setState({ file: null })
+
   _onChangeFile = (e) => {
     // Reset
     this.setState({ fileUrl: '', file: null });
@@ -40,6 +42,13 @@ export default class Home extends Component {
         <div className="container">
           <Header />
           <div className="row">
+            <div className="col-12 col-md-6">
+              <Showcase
+                loading={this.state.loading}
+                resultUrl={this.state.resultUrl}
+              />
+            </div>
+
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div>
                 {/* Cropper */}
@@ -49,17 +58,27 @@ export default class Home extends Component {
                     file={this.state.file}
                     loading={this.state.loading}
                     _setLoadingAndUrl={this._setLoadingAndUrl}
+                    _resetFile={this._resetFile}
                   />
                 }
 
+                {this.state.resultUrl &&
+                  <h1 className="result-text">
+                    <span role="img" aria-label="detectives">🧐</span>
+                    <br />
+                    Your <span className="private-text">Private</span> Profile Picture Is Ready !
+                  </h1>
+                }
                 {/* Form */}
                 {!this.state.loading &&
                   <form>
                     <div className="form-group">
                       <label htmlFor="uploadFile">
-                        {isCropping ?
-                          'Or' : 'Create your private profile pic here'
+                        {isCropping || this.state.resultUrl ?
+                          'Or create another ' : 'Create your '
                         }
+                        <span className="private-text">private</span>{' '}
+                        profile pic here
                       </label>
                       <div className="custom-file">
                         <input
@@ -80,18 +99,18 @@ export default class Home extends Component {
                 }
               </div>
             </div>
-
-            <div className="col-12 col-md-6">
-              <Showcase
-                loading={this.state.loading}
-                resultUrl={this.state.resultUrl}
-              />
-            </div>
           </div>
         </div>
         <style jsx>{`
           .container {
             padding-top: 30px;
+          }
+          .result-text {
+            margin-bottom: 30px;
+          }
+          .private-text {
+            color: ${config.COLOR_SECONDARY};
+            font-style: italic;
           }
         `}
         </style>

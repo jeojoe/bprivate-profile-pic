@@ -152,7 +152,8 @@ const handler = async (req, res) => {
       gm(data)
         .modulate(95, 155)
         .contrast('+')
-        .toBuffer('PNG', (err2, resultBuffer) => {
+        .compress('jpeg')
+        .toBuffer('JPEG', (err2, resultBuffer) => {
           if (err2) {
             send(res, 500, 'Error code 2: Something went wrong!');
             return;
@@ -160,8 +161,8 @@ const handler = async (req, res) => {
           s3.upload({
             ACL: 'public-read',
             Bucket: 'jeojoe',
-            ContentType: 'image/png',
-            Key: `bprivate-profile-pic/${cuid()}.png`,
+            ContentType: 'image/jpeg',
+            Key: `bprivate-profile-pic/${cuid()}.jpeg`,
             Body: resultBuffer,
           }, (err3, dataS3) => {
             if (err3) {

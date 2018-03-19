@@ -16,11 +16,13 @@ class CropperComponent extends Component {
       .buffer(true)
       .then((res) => {
         this.props._setLoadingAndUrl(false, res.text);
+        this.props._resetFile();
       })
       .catch((err) => {
         this.props._setLoadingAndUrl(false, null);
-        alert('Something went wrong! contact jirat.onaree@gmail.com');
+        this.props._resetFile();
         console.log(err);
+        alert('Something went wrong! contact jirat.onaree@gmail.com');
       });
   }
 
