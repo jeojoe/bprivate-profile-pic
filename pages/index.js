@@ -40,12 +40,6 @@ export default class Home extends Component {
         <div className="container">
           <Header />
           <div className="row">
-            <div className="col-12 col-md-6">
-              <Showcase
-                loading={this.state.loading}
-                resultUrl={this.state.resultUrl}
-              />
-            </div>
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div>
                 {/* Cropper */}
@@ -59,30 +53,39 @@ export default class Home extends Component {
                 }
 
                 {/* Form */}
-                <form>
-                  <div className="form-group">
-                    <label htmlFor="uploadFile">
-                      {isCropping ?
-                        'Or' : 'Create your private profile pic here'
-                      }
-                    </label>
-                    <div className="custom-file">
-                      <input
-                        type="file"
-                        className="custom-file-input"
-                        onChange={this._onChangeFile}
-                        id="uploadFile"
-                      />
-                      <label
-                        className="custom-file-label"
-                        htmlFor="uploadFile"
-                      >
-                        {isCropping ? 'Choose new file..' : 'Choose file..'}
+                {!this.state.loading &&
+                  <form>
+                    <div className="form-group">
+                      <label htmlFor="uploadFile">
+                        {isCropping ?
+                          'Or' : 'Create your private profile pic here'
+                        }
                       </label>
+                      <div className="custom-file">
+                        <input
+                          type="file"
+                          className="custom-file-input"
+                          onChange={this._onChangeFile}
+                          id="uploadFile"
+                        />
+                        <label
+                          className="custom-file-label"
+                          htmlFor="uploadFile"
+                        >
+                          {isCropping ? 'Choose new file..' : 'Choose file..'}
+                        </label>
+                      </div>
                     </div>
-                  </div>
-                </form>
+                  </form>
+                }
               </div>
+            </div>
+
+            <div className="col-12 col-md-6">
+              <Showcase
+                loading={this.state.loading}
+                resultUrl={this.state.resultUrl}
+              />
             </div>
           </div>
         </div>

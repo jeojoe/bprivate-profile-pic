@@ -2,11 +2,12 @@ import React, { Component } from 'react';
 import { Cropper } from 'react-image-cropper';
 import request from 'superagent';
 
+import { Loader } from '../components';
 import config from '../config';
 
 class CropperComponent extends Component {
   _upload = () => {
-    // console.log(this.cropper.values());
+    this.props._setLoadingAndUrl(true, null);
     request
       .post(config.SERVER_URL)
       .send({
@@ -26,10 +27,16 @@ class CropperComponent extends Component {
   render() {
     return (
       <div className="wrapper">
+        {this.props.loading &&
+          <div className="loading-overlay d-flex justify-content-center align-items-center">
+            <Loader />
+          </div>
+        }
         <div style={{ width: '100%', marginBottom: '15px' }}>
           <Cropper
             src={this.props.fileUrl}
             ref={(ref) => { this.cropper = ref; }}
+            disabled={this.props.loading}
           />
         </div>
         <div className="form-group">
@@ -37,12 +44,18 @@ class CropperComponent extends Component {
             type="submit"
             className="btn btn-info btn-lg btn-block"
             onClick={this._upload}
+            disabled={this.props.loading}
           >
-            {this.props.loading ? 'Generating..' : 'Be Private!'}
+            {this.props.loading ? 'Becoming private..' : 'Be Private !'}
           </button>
         </div>
         <style jsx>{`
           .wrapper {
+            width: 100%;
+          }
+          .loading-overlay {
+            position: absolute;
+            z-index: 999;
             width: 100%;
           }
         `}
