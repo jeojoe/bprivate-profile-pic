@@ -1,4 +1,4 @@
-const { buffer, send } = require('micro');
+const { json, send } = require('micro');
 const cors = require('micro-cors')();
 const sharp = require('sharp');
 const gm = require('gm');
@@ -65,24 +65,31 @@ function mask(picBuffer) {
   });
 
   const blueInvertPm = new Promise((resolve, reject) => {
-    gmImage(picBuffer)
+    gm(picBuffer)
       .resize(config.PIC_SIZE, config.PIC_SIZE)
-      .colorspace('GRAY')
       .negative()
-      .colorize(...config.COLOR)
-      .toBuffer('PNG', (err, blueInvertBuffer) => {
+      .toBuffer('PNG', (err, lolBuffer) => {
         if (!err) {
-          gm(blueInvertBuffer)
-            .matte()
-            .operator('Opacity', 'Negate', 0)
-            .operator('Opacity', 'Multiply', 0.5)
-            .operator('Opacity', 'Negate', 0)
-            .toBuffer('PNG', (err2, blueInvertAndTransBuffer) => {
+          gmImage(lolBuffer)
+            .colorspace('GRAY')
+            .colorize(...config.COLOR)
+            .toBuffer('PNG', (err2, blueInvertBuffer) => {
               if (!err2) {
-                resolve(blueInvertAndTransBuffer);
+                gm(blueInvertBuffer)
+                  .matte()
+                  .operator('Opacity', 'Negate', 0)
+                  .operator('Opacity', 'Multiply', 0.5)
+                  .operator('Opacity', 'Negate', 0)
+                  .toBuffer('PNG', (err3, blueInvertAndTransBuffer) => {
+                    if (!err3) {
+                      resolve(blueInvertAndTransBuffer);
+                      return;
+                    }
+                    reject(err2);
+                  });
                 return;
               }
-              reject(err2);
+              reject(err);
             });
           return;
         }
@@ -105,7 +112,10 @@ const s3 = new aws.S3({
 
 // Http handler
 const handler = async (req, res) => {
-  const picBuffer = await buffer(req);
+  const regex = RegExp('data:image/png;base64,');
+  const body = await json(req, { limit: '5mb' });
+  const picBuffer = Buffer.from(body.base64.replace(regex, ''), 'base64');
+
   const btcpLogoBuffer = await sharp('btcp-logo.png')
     .resize(config.PIC_SIZE, config.PIC_SIZE)
     .toBuffer();
@@ -117,6 +127,11 @@ const handler = async (req, res) => {
     blueInvertBuffer,
   ] = await mask(picBuffer);
 
+  // gm(blueInvertBuffer)
+  //   .colorize(...config.COLOR)
+  //   .write('lol.png', err => console.log(err));
+
+  // await sharp(blueInvertBuffer).toFile('lolinver.png');
   // 2 base blue images (normal + invert)
   const mergedBlueBuffer = await sharp(grayBuffer)
     .overlayWith(blueBuffer)
@@ -124,6 +139,10 @@ const handler = async (req, res) => {
   const mergedBlueInvertBuffer = await sharp(grayInvertBuffer)
     .overlayWith(blueInvertBuffer)
     .toBuffer();
+
+  // await sharp(grayInvertBuffer)
+  //   // .overlayWith(blueInvertBuffer)
+  //   .toFile('lol.png');
 
   // Do the logo cut
   const logoCutBuffer = await sharp(mergedBlueInvertBuffer)
@@ -155,6 +174,7 @@ const handler = async (req, res) => {
             }
 
             // Success
+            console.log('done', data.Location);
             send(res, 200, data.Location);
           });
         });
