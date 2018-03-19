@@ -3,6 +3,7 @@ import Header from './Header';
 import Showcase from './Showcase';
 import Cropper from './Cropper';
 import Loader from './Loader';
+import Footer from './Footer';
 
 export {
   Layout,
@@ -10,4 +11,5 @@ export {
   Showcase,
   Cropper,
   Loader,
+  Footer,
 };

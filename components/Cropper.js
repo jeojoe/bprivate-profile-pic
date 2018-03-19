@@ -54,6 +54,7 @@ class CropperComponent extends Component {
         <style jsx>{`
           .wrapper {
             width: 100%;
+            margin-bottom: 30px;
           }
           .loading-overlay {
             position: absolute;

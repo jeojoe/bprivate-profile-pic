@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
-import request from 'superagent';
 
 import config from '../config';
-import { Layout, Header, Showcase, Cropper } from '../components';
+import { Layout, Header, Showcase, Cropper, Footer } from '../components';
 
 export default class Home extends Component {
   state = {
@@ -18,11 +17,17 @@ export default class Home extends Component {
 
   _onChangeFile = (e) => {
     // Reset
-    this.setState({ fileUrl: '', file: null });
+    this.setState({ fileUrl: '', file: null, resultUrl: '' });
 
     const file = e.target.files[0];
+
+    // Validator
     if (!file) {
       this.setState({ fileUrl: '', file });
+      return;
+    }
+    if (file.size > 2000000) {
+      alert('File is too big !');
       return;
     }
 
@@ -86,6 +91,7 @@ export default class Home extends Component {
                           className="custom-file-input"
                           onChange={this._onChangeFile}
                           id="uploadFile"
+                          accept="image/jpeg, image/png"
                         />
                         <label
                           className="custom-file-label"
@@ -99,6 +105,8 @@ export default class Home extends Component {
                 }
               </div>
             </div>
+
+            <Footer />
           </div>
         </div>
         <style jsx>{`
@@ -111,6 +119,8 @@ export default class Home extends Component {
           .private-text {
             color: ${config.COLOR_SECONDARY};
             font-style: italic;
+            font-weight: bold;
+            font-family: 'Ubuntu', sans-serif;
           }
         `}
         </style>
