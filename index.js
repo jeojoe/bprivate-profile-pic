@@ -108,6 +108,7 @@ const s3 = new aws.S3({
 
 // Http handler
 const handler = async (req, res) => {
+  console.time('main');
   const regex = RegExp('data:image/png;base64,');
   const body = await json(req, { limit: '5mb' });
   const picBuffer = Buffer.from(body.base64.replace(regex, ''), 'base64');
@@ -162,14 +163,16 @@ const handler = async (req, res) => {
             ContentType: 'image/png',
             Key: `bprivate-profile-pic/${cuid()}.png`,
             Body: resultBuffer,
-          }, (err2, data) => {
-            if (err2) {
+          }, (err3, dataS3) => {
+            if (err3) {
               send(res, 500, 'Error code 3: Something went wrong!');
             }
 
             // Success
-            console.log('done', data.Location);
-            send(res, 200, data.Location);
+            console.log('===== Success ! =====');
+            console.timeEnd('main');
+            console.log('done', dataS3.Location);
+            send(res, 200, dataS3.Location);
           });
         });
     });
