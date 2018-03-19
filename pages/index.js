@@ -1,15 +1,30 @@
 import React, { Component } from 'react';
-import { Head } from 'next/head';
 import request from 'superagent';
 
 import config from '../config';
-import { Layout, Header, Showcase } from '../components';
+import { Layout, Header, Showcase, Cropper } from '../components';
 
 export default class Home extends Component {
   state = {
     file: null,
+    fileUrl: '',
     resultUrl: null,
     loading: false,
+  }
+
+  _onChangeFile = (e) => {
+    const file = e.target.files[0];
+    if (!file) {
+      this.setState({ fileUrl: '', file });
+      return;
+    }
+
+    const reader = new FileReader(); // eslint-disable-line
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      this.setState({ fileUrl: reader.result, file });
+    };
   }
 
   _uploadFile = (file) => {
@@ -31,10 +46,12 @@ export default class Home extends Component {
   _formSubmit = (e) => {
     e.preventDefault();
     this._uploadFile(this.state.file);
-    this.setState({ file: null });
+    this.setState({ file: null, fileUrl: '' });
   }
 
   render() {
+    const isCropping = this.state.file && this.state.fileUrl;
+
     return (
       <Layout>
         <div className="container">
@@ -48,34 +65,37 @@ export default class Home extends Component {
             </div>
             <div className="col-12 col-md-6 d-flex align-items-center">
               <div>
+                {/* Cropper */}
+                {isCropping &&
+                  <Cropper
+                    fileUrl={this.state.fileUrl}
+                    file={this.state.file}
+                    loading={this.state.loading}
+                  />
+                }
+
                 {/* Form */}
                 <form onSubmit={this._formSubmit}>
                   <div className="form-group">
                     <label htmlFor="uploadFile">
-                      Create your private profile pic
+                      {isCropping ?
+                        'Or' : 'Create your private profile pic here'
+                      }
                     </label>
                     <div className="custom-file">
                       <input
                         type="file"
                         className="custom-file-input"
-                        onChange={e => this.setState({ file: e.target.files[0] })}
+                        onChange={this._onChangeFile}
                         id="uploadFile"
                       />
                       <label
                         className="custom-file-label"
                         htmlFor="uploadFile"
                       >
-                        Choose file
+                        {isCropping ? 'Choose new file..' : 'Choose file..'}
                       </label>
                     </div>
-                  </div>
-                  <div className="form-group">
-                    <button
-                      type="submit"
-                      className="btn btn-info btn-lg btn-block"
-                    >
-                      {this.state.loading ? 'Generating..' : 'Be Private!'}
-                    </button>
                   </div>
                 </form>
               </div>

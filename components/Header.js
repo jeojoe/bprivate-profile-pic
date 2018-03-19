@@ -12,7 +12,9 @@ export default () => (
       />
       <div>
         <h1 className="header">
-          Bitcoin <span className="light-blue">Private</span> Profile Picture Generator
+          <span className="italic">
+            Bitcoin <span className="light-blue">Private</span>
+          </span> Profile Picture Generator
         </h1>
         <p>Always be private. (Still in beta!)</p>
       </div>
@@ -29,6 +31,9 @@ export default () => (
         font-family: 'Ubuntu', sans-serif;
         font-weight: bold;
         color: ${config.COLOR_PRIMARY.trim()};
+      }
+      .italic {
+        font-style: italic;
       }
       .light-blue {
         color: ${config.COLOR_SECONDARY.trim()};
