@@ -5,7 +5,7 @@
 1. [x] Choose file button & Loading progress
     - More intuitive ui
     - Download button (or some test saying Copy/Paste)
-1. [ ] Compress image
+1. [X] Compress image
 1. [ ] Footer (by whom, inspired by, etc.)
 1. [ ] Social Sharing
 1. [ ] Google Analytics
