@@ -12,7 +12,6 @@ const config = require('./config');
 function mask(picBuffer) {
   const grayPm = new Promise((resolve, reject) => {
     gm(picBuffer)
-      .resize(config.PIC_SIZE, config.PIC_SIZE)
       .colorspace('GRAY')
       .contrast('+')
       .toBuffer('PNG', (err, grayBuffer) => {
@@ -26,7 +25,6 @@ function mask(picBuffer) {
 
   const bluePm = new Promise((resolve, reject) => {
     gmImage(picBuffer)
-      .resize(config.PIC_SIZE, config.PIC_SIZE)
       .colorspace('GRAY')
       .colorize(...config.COLOR)
       .toBuffer('PNG', (err, blueBuffer) => {
@@ -51,7 +49,6 @@ function mask(picBuffer) {
 
   const grayInvertPm = new Promise((resolve, reject) => {
     gm(picBuffer)
-      .resize(config.PIC_SIZE, config.PIC_SIZE)
       .colorspace('GRAY')
       .contrast('+')
       .negative()
@@ -66,7 +63,6 @@ function mask(picBuffer) {
 
   const blueInvertPm = new Promise((resolve, reject) => {
     gm(picBuffer)
-      .resize(config.PIC_SIZE, config.PIC_SIZE)
       .negative()
       .toBuffer('PNG', (err, lolBuffer) => {
         if (!err) {
@@ -119,30 +115,23 @@ const handler = async (req, res) => {
   const btcpLogoBuffer = await sharp('btcp-logo.png')
     .resize(config.PIC_SIZE, config.PIC_SIZE)
     .toBuffer();
+  const picBufferResized = await sharp(picBuffer)
+    .resize(config.PIC_SIZE, config.PIC_SIZE)
+    .toBuffer();
 
   const [
     grayBuffer,
     blueBuffer,
     grayInvertBuffer,
     blueInvertBuffer,
-  ] = await mask(picBuffer);
+  ] = await mask(picBufferResized);
 
-  // gm(blueInvertBuffer)
-  //   .colorize(...config.COLOR)
-  //   .write('lol.png', err => console.log(err));
-
-  // await sharp(blueInvertBuffer).toFile('lolinver.png');
-  // 2 base blue images (normal + invert)
   const mergedBlueBuffer = await sharp(grayBuffer)
     .overlayWith(blueBuffer)
     .toBuffer();
   const mergedBlueInvertBuffer = await sharp(grayInvertBuffer)
     .overlayWith(blueInvertBuffer)
     .toBuffer();
-
-  // await sharp(grayInvertBuffer)
-  //   // .overlayWith(blueInvertBuffer)
-  //   .toFile('lol.png');
 
   // Do the logo cut
   const logoCutBuffer = await sharp(mergedBlueInvertBuffer)
@@ -154,11 +143,16 @@ const handler = async (req, res) => {
   sharp(mergedBlueBuffer)
     .overlayWith(logoCutBuffer)
     .toBuffer((err, data) => {
+      if (err) {
+        send(res, 500, 'Error code 1');
+        return;
+      }
+
       gm(data)
         .modulate(95, 155)
         .contrast('+')
-        .toBuffer('PNG', (err, resultBuffer) => {
-          if (err) {
+        .toBuffer('PNG', (err2, resultBuffer) => {
+          if (err2) {
             send(res, 500, 'Error code 2: Something went wrong!');
             return;
           }
