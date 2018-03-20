@@ -8,7 +8,7 @@
   "scripts": {
     "dev-client": "PORT=3000 next -p 3000",
     "dev-server": "PORT=3001 micro-dev -p 3001",
-    "build": "next build",
+    "build": "next build && next export",
     "start-client": "PORT=3000 next start -p 3000",
     "start-server": "PORT=3001 micro -p 3001"
   },
