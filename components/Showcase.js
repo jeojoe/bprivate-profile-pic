@@ -18,7 +18,7 @@ export default ({ loading, resultUrl }) => (
       alt={resultUrl ? 'Hmmm...' : 'Haha not gonna tell you!'}
     />
     <figcaption className="figure-caption text-right">
-      {resultUrl ? 'Hmmm 🤔 who\'s in this picture..' : 'Guess who is in above image.'}
+      {resultUrl ? 'Hmmm 🤔 who\'s in this picture?' : 'Guess who is in above image.'}
     </figcaption>
   </figure>
 );

@@ -104,7 +104,7 @@ export default class Home extends Component {
                           className="custom-file-label"
                           htmlFor="uploadFile"
                         >
-                          {isCropping ? 'Choose new file..' : 'Choose file..'}
+                          {isCropping ? 'Choose new picture.. (< 2MB)' : 'Choose your picture.. (< 2MB)'}
                         </label>
                       </div>
                     </div>

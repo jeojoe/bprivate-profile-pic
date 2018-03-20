@@ -16,7 +16,7 @@ export default () => (
             Bitcoin <span className="light-blue">Private</span>
           </span> Profile Picture Generator
         </h1>
-        <p>Always be private. (Still in beta!)</p>
+        <p>Always be private, even your profile pic! (Beta)</p>
       </div>
     </div>
     <style jsx>{`
