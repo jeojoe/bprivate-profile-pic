@@ -108,9 +108,9 @@ const s3 = new aws.S3({
 
 // Http handler
 const handler = async (req, res) => {
-  console.time('main');
+  // console.time('main');
   const regex = RegExp('data:image/png;base64,');
-  const body = await json(req, { limit: '5mb' });
+  const body = await json(req, { limit: '25mb' });
   const picBuffer = Buffer.from(body.base64.replace(regex, ''), 'base64');
 
   const btcpLogoBuffer = await sharp('btcp-logo.png')
@@ -170,9 +170,9 @@ const handler = async (req, res) => {
             }
 
             // Success
-            console.log('===== Success ! =====');
-            console.timeEnd('main');
-            console.log('done', dataS3.Location);
+            // console.log('===== Success ! =====');
+            // console.timeEnd('main');
+            // console.log('done', dataS3.Location);
             send(res, 200, dataS3.Location);
           });
         });

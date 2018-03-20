@@ -49,7 +49,7 @@ class CropperComponent extends Component {
         this.props._setLoadingAndUrl(false, null);
         this.props._resetFile();
         console.log(err);
-        alert('Something went wrong! contact jirat.onaree@gmail.com');
+        alert('Something went wrong! Please try again or contact developer');
       });
   }
 
