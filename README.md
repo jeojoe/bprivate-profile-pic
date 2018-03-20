@@ -8,7 +8,7 @@
 1. [X] Compress image
 1. [X] Footer (by whom, inspired by, etc.)
 1. [ ] Social Sharing
-1. [ ] Google Analytics
+1. [X] Google Analytics
 1. [ ] CircleCI
 1. [ ] Testing
 1. [ ] Fb login integration
