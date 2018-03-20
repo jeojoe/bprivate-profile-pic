@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
+import ReactGA from 'react-ga';
 
 import config from '../config';
 import { Layout, Header, Showcase, Cropper, Footer } from '../components';
+
+ReactGA.initialize('UA-74857357-3');
 
 export default class Home extends Component {
   state = {
@@ -9,6 +12,10 @@ export default class Home extends Component {
     fileUrl: '',
     resultUrl: null,
     loading: false,
+  }
+
+  componentDidMount() {
+    ReactGA.pageview('/');
   }
 
   _setLoadingAndUrl = (loading, resultUrl) => this.setState({ loading, resultUrl })

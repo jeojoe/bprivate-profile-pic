@@ -1,12 +1,19 @@
 import React, { Component } from 'react';
 import { Cropper } from 'react-image-cropper';
 import request from 'superagent';
+import ReactGA from 'react-ga';
 
 import { Loader } from '../components';
 import config from '../config';
 
 class CropperComponent extends Component {
   _upload = () => {
+    ReactGA.event({
+      category: 'Upload',
+      action: 'upload',
+    });
+    const t0 = performance.now();
+
     this.props._setLoadingAndUrl(true, null);
     request
       .post(config.SERVER_URL)
@@ -15,10 +22,30 @@ class CropperComponent extends Component {
       })
       .buffer(true)
       .then((res) => {
+        ReactGA.event({
+          category: 'Upload',
+          action: 'upload-success',
+        });
+        ReactGA.timing({
+          category: 'Upload',
+          variable: 'uploadTime',
+          value: performance.now() - t0, // in milliseconds
+          label: 'upload time success',
+        });
         this.props._setLoadingAndUrl(false, res.text);
         this.props._resetFile();
       })
       .catch((err) => {
+        ReactGA.event({
+          category: 'Upload',
+          action: 'upload-failed',
+        });
+        ReactGA.timing({
+          category: 'Upload',
+          variable: 'uploadTime',
+          value: performance.now() - t0, // in milliseconds
+          label: 'upload time failed',
+        });
         this.props._setLoadingAndUrl(false, null);
         this.props._resetFile();
         console.log(err);

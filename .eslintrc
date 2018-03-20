@@ -12,7 +12,8 @@
     "ecmaVersion": 2018
   },
   "globals": {
-    "__DEV__": true
+    "__DEV__": true,
+    "performance": true
   },
   "env": {
     "jest/globals": true
