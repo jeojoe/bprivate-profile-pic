@@ -34,7 +34,7 @@ export default class Home extends Component {
       return;
     }
     if (file.size > 2000000) {
-      alert('File is too big! (> 2MB)');
+      alert('The file is too big! (> 2MB)');
       return;
     }
 
