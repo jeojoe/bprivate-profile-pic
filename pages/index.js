@@ -33,8 +33,8 @@ export default class Home extends Component {
       this.setState({ fileUrl: '', file });
       return;
     }
-    if (file.size > 2000000) {
-      alert('The file is too big! (> 2MB)');
+    if (file.size > 1000000) {
+      alert('No more than 1MB file size please!');
       return;
     }
 
@@ -104,7 +104,7 @@ export default class Home extends Component {
                           className="custom-file-label"
                           htmlFor="uploadFile"
                         >
-                          {isCropping ? 'Choose new picture.. (< 2MB)' : 'Choose your picture.. (< 2MB)'}
+                          {isCropping ? 'Choose new picture.. (< 1MB)' : 'Choose your picture.. (< 1MB)'}
                         </label>
                       </div>
                     </div>
