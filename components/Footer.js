@@ -16,7 +16,7 @@ export default () => (
     <blockquote className="blockquote mb-0">
       <footer className="blockquote-footer">
         <small className="text-muted">
-          Built by <a href="https://jeojoe.com">jeojoe</a> for Bitcoin Private community
+          Built by <a href="https://www.reddit.com/user/Crypjoe/">Crypjoe</a> for Bitcoin Private community
         </small>
       </footer>
     </blockquote>
