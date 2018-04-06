@@ -4,16 +4,16 @@ import React from 'react';
 // elon : https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeylakpu0001ompzudkn9vqm.jpeg
 // satoshi : https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeylczo80000zapzzpkzu2ix.jpeg
 
-const placeholder = Math.random() >= 0.5 ?
-  'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeyl9jot0000ompz7yjk1gt0.jpeg'
-  :
-  'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeylakpu0001ompzudkn9vqm.jpeg';
+// const placeholder = Math.random() >= 0.5 ?
+//   'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeyl9jot0000ompz7yjk1gt0.jpeg'
+//   :
+//   'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeylakpu0001ompzudkn9vqm.jpeg';
 
 
 export default ({ loading, resultUrl }) => (
   <figure className="figure">
     <img
-      src={resultUrl || placeholder}
+      src={resultUrl || 'https://jeojoe.sgp1.digitaloceanspaces.com/bprivate-profile-pic/cjeylakpu0001ompzudkn9vqm.jpeg'}
       className="figure-img img-fluid rounded"
       alt={resultUrl ? 'Hmmm...' : 'Haha not gonna tell you!'}
     />
